@@ -1,0 +1,42 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Delete Device</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+      body { font-family: system-ui, Arial, sans-serif; padding: 24px; }
+      .card { max-width: 420px; padding: 16px; border: 1px solid #ddd; border-radius: 12px; }
+      button { padding: 10px 16px; border-radius: 10px; border: 0; cursor: pointer; }
+      input { width: 100%; padding: 10px; border-radius: 10px; border: 1px solid #ccc; }
+      .row { display: grid; gap: 12px; }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <h2>Delete Device</h2>
+      <div class="row">
+        <input id="deviceId" placeholder="Enter deviceId (e.g., abc123)" />
+        <button onclick="del()">Delete from SQL + Mongo</button>
+      </div>
+      <p id="out"></p>
+    </div>
+
+    <script>
+      async function del() {
+        const id = document.getElementById('deviceId').value.trim();
+        const out = document.getElementById('out');
+        if (!id) { out.textContent = 'Enter a deviceId'; return; }
+
+        out.textContent = 'Deleting...';
+        try {
+          const r = await fetch(`http://localhost:4000/devices/${encodeURIComponent(id)}`, { method: 'DELETE' });
+          const j = await r.json();
+          out.textContent = r.ok ? `Deleted ${j.deleted}` : JSON.stringify(j);
+        } catch (e) {
+          out.textContent = e.message;
+        }
+      }
+    </script>
+  </body>
+</html>
